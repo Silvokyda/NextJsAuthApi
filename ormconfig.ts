@@ -7,7 +7,7 @@ const ormconfig: TypeOrmModuleOptions = {
   username: 'sql3715468',
   password: 'iECPDx16YJ',
   database: 'sql3715468',
-  synchronize: true,
+  synchronize: false,
   logging: true, 
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.ts,.js}'], 
