@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserRepository } from '../users/user.repository';
+import { UserService } from '../users/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(UserRepository)
-    private readonly userRepository: UserRepository,
+    private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -19,13 +17,13 @@ export class AuthService {
   }
 
   async signUp(phoneNumber: string, password: string): Promise<any> {
-    const user = await this.userRepository.createUser(phoneNumber, password);
+    const user = await this.userService.createUser(phoneNumber, password);
     const { password: _, ...result } = user;
     return result;
   }
 
   async validateUser(phoneNumber: string, password: string): Promise<any> {
-    const user = await this.userRepository.findByPhoneNumber(phoneNumber);
+    const user = await this.userService.findByPhoneNumber(phoneNumber);
     if (user && user.password === password) {
       const { password, ...result } = user;
       return result;
