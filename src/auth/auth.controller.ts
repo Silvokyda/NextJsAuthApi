@@ -1,4 +1,4 @@
-import { Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException, Request, UseGuards, HttpStatus, HttpException, ConflictException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 
@@ -7,14 +7,30 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  async signUp(@Request() req) {
-    const { phoneNumber, password } = req.body;
-    return this.authService.signUp(phoneNumber, password);
+  async signUp(@Body() body: { phoneNumber: string, password: string }) {
+    try {
+      const result = await this.authService.signUp(body.phoneNumber, body.password);
+      return { statusCode: HttpStatus.CREATED, data: result };
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        throw new HttpException({ message: error.message }, HttpStatus.CONFLICT);
+      }
+      throw new HttpException({ message: 'Internal server error' }, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Post('login')
+  async login(@Body('phoneNumber') phoneNumber: string, @Body('password') password: string) {
+    try {
+      return this.authService.login(phoneNumber, password);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+  }
+
   @UseGuards(AuthGuard('jwt'))
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  @Post('profile')
+  async getProfile(@Request() req) {
+    return req.user;
   }
 }
