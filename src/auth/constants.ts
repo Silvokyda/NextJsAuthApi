@@ -1,4 +1,4 @@
 export const jwtConstants = {
-    secret: '4rever2moro', 
+    secret: process.env.JWT_SECRET || 'default_secret',
   };
   
