@@ -2,11 +2,11 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 const ormconfig: TypeOrmModuleOptions = {
   type: 'mysql',
-  host: 'localhost',
+  host: 'sql3.freesqldatabase.com',
   port: 3306,
-  username: 'root',
-  password: '',
-  database: 'NextAuthDB',
+  username: 'sql3715468',
+  password: 'iECPDx16YJ',
+  database: 'sql3715468',
   synchronize: false,
   logging: true, 
   entities: ['dist/**/*.entity{.ts,.js}'],
