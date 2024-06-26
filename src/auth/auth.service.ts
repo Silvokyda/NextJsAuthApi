@@ -1,8 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../users/user.service';
 import * as bcrypt from 'bcryptjs';
-import { ConflictException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +11,6 @@ export class AuthService {
   ) {}
 
   async login(phoneNumber: string, password: string) {
-
     const user = await this.userService.findByPhoneNumber(phoneNumber);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -34,7 +32,15 @@ export class AuthService {
     try {
       const user = await this.userService.createUser(phoneNumber, password);
       const { password: _, ...result } = user;
-      return result;
+
+      const payload = { sub: user.id, phoneNumber: user.phoneNumber };
+      const accessToken = this.jwtService.sign(payload);
+
+      return {
+        user: result,
+        access_token: accessToken,
+        expiresIn: 3600,
+      };
     } catch (error) {
       if (error instanceof ConflictException) {
         throw new ConflictException('Phone number already exists');

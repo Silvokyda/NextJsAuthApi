@@ -1,17 +1,20 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const ormconfig: TypeOrmModuleOptions = {
-  type: 'mysql',
-  host: 'sql3.freesqldatabase.com',
-  port: 3306,
-  username: 'sql3715468',
-  password: 'iECPDx16YJ',
-  database: 'sql3715468',
+  type: process.env.DB_TYPE as any, 
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT, 10),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
   synchronize: false,
-  logging: true, 
+  logging: true,
   entities: ['dist/**/*.entity{.ts,.js}'],
-  migrations: ['dist/migrations/*{.ts,.js}'], 
-  subscribers: ['dist/subscribers/*{.ts,.js}'], 
+  migrations: ['dist/migrations/*{.ts,.js}'],
+  subscribers: ['dist/subscribers/*{.ts,.js}'],
 };
 
 export default ormconfig;
